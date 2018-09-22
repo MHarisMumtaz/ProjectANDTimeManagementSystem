@@ -1,0 +1,155 @@
+﻿@{
+    ViewBag.Title = "user";
+    Layout = "~/Views/Shared/_Suser.cshtml";
+}
+
+<div class="wrapper">
+    <div class="container">
+        <div class="content">
+
+            <div class="module message">
+                <div class="module-head">
+                    <h3>Daily Loged</h3>
+                </div>
+                @if (timeSheet.Sessions.IsUserLoged == "true")
+                {
+                    <script>alert("Successfully loged.");</script>
+                }
+                else if (timeSheet.Sessions.IsUserLoged == "false")
+                {
+                    <script>alert("Hours should be less than 9 Hours.");</script>
+                }
+                <div class="module-body" style="padding-left: 7%; padding-top: 6%;">
+
+                    @using (Html.BeginForm("Loged", "Users", FormMethod.Post, new { @class = "form-horizontal row-fluid" }))
+                    {
+
+                        <input type="hidden" id="projectID" name="projectID" />
+                        <div style="margin-bottom: 2%;">
+                            <label class="control-label" for="basicinput">Project</label>
+                            <div class="controls">
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle btn pro" data-toggle="dropdown" href="#" id="-1">Select Project<i class="icon-caret-down"></i></a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                        @foreach (var item in timeSheet.Models.Project.GetUserProjects())
+                                        {
+                                            <li><a id="@item.UserProjectID" onclick="selectedpro(this)">@item.ProjectName</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div style="margin-bottom: 2%;">
+                            <label class="control-label">Day</label>
+                            <div class="controls">
+                                <input class="span8" name="days" type="date" required />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2%;">
+                            <label class="control-label">Hours</label>
+                            <div class="controls">
+                                <input class="span8" name="hour" type="text" required />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2%;">
+                            <label class="control-label">Task Description</label>
+                            <div class="controls">
+                                <textarea class="span8" name="desc" rows="4" cols="20" style="resize:none;" required></textarea>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2%; display: inline-block;">
+                            <div class="controls">
+                                <button type="submit" name="usersign" class="btn btn-large btn-inverse">Loged</button>&nbsp;&nbsp;&nbsp;
+
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div style="margin-bottom: 2%; margin-left:10%;">
+                    <label class="control-label" for="basicinput">Project</label>
+                    <div class="controls">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle btn proj" data-toggle="dropdown" href="#" id="-1">Select Project<i class="icon-caret-down"></i></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                @foreach (var item in timeSheet.Models.Project.GetUserProjects())
+                                {
+                                    <li><a id="@item.ProjectID" onclick="getdailylog(this)">@item.ProjectName</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="module-body" style="overflow-y: scroll;">
+                    <table class=" table table-message">
+                        <tbody id="daily">
+                            <tr class="heading">
+                                <td class="cell-check"></td>
+                                <td class="cell-author hidden-phone hidden-tablet">
+                                    Days
+                                </td>
+                                <td class="cell-author hidden-phone hidden-tablet">
+                                    Hours
+                                </td>
+                                <td class="cell-author hidden-phone hidden-tablet">
+                                    Description
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!--/.content-->
+
+</div>
+<!--/.wrapper-->
+@section footer{
+    <script type="text/javascript">
+
+        $('#butnhide').hide();
+
+        function selecteduser(data) {
+            $(".use").text($(data).text());
+            $id = $(data).attr("id");
+            $('#userID').val($id);
+        }
+
+        function selectedpro(data) {
+            $(".pro").text($(data).text());
+            $id = $(data).attr("id");
+            $('#projectID').val($id);
+        }
+
+
+        function getdailylog(data) {
+            $(".proj").text($(data).text());
+            $id = $(data).attr("id");
+          
+            $.getJSON('/api/FetchInfo/Dailylog/' + $id, function (Data) {
+                $('#daily').empty();
+                $('#daily').append(' <tr class="heading"><td class="cell-check"></td> <td class="cell-author hidden-phone hidden-tablet"> Days </td><td class="cell-author hidden-phone hidden-tablet">Hours</td><td class="cell-author hidden-phone hidden-tablet">Description</td></tr>');
+                $(Data).each(function (i, item) {
+                    $('#daily').append(' <tr class="unread"><td class="cell-check"><i class="icon-flag"></i></td><td class="cell-author hidden-phone hidden-tablet">' + item.days + ' </td><td class="cell-author hidden-phone hidden-tablet">' + item.Hours + '</td><td class="cell-author hidden-phone hidden-tablet">' + item.TaskDescription + '</td></tr>');
+                })
+            });
+
+
+        }
+
+
+    </script>
+}

@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "UserCreation";
+    Layout = "~/Views/Shared/_user.cshtml";
+}
+@model timeSheet.Models.Users
+<div class="module message">
+    <div class="module-head">
+        <h3>User Creation</h3>
+    </div>
+    <div class="module-body" style="padding-left: 7%; padding-top: 6%;">
+
+        @if (timeSheet.Sessions.IsUserCreated == "true")
+        {
+            <script>alert("User Has been successfully Created.");</script>
+        }
+        else if (timeSheet.Sessions.IsUserCreated == "false")
+        {
+            <script>alert("UserID Already exist.");</script>
+        }
+
+        @using (Html.BeginForm("createUser", "Admins", FormMethod.Post, new { @class = "form-horizontal row-fluid" }))
+        {
+            <div style="margin-bottom: 2%;">
+                <label class="control-label">UserID</label>
+
+                <div class="controls">
+                    <input class="span8" name="Userid" type="text" required />
+
+
+
+                </div>
+
+            </div>
+            <div style="margin-bottom: 2%;">
+                <label class="control-label">Password</label>
+
+                <div class="controls">
+                    <input class="span8" name="pass" type="text" required />
+
+                </div>
+
+            </div>
+
+            <div style="margin-bottom: 2%;">
+
+                    <div class="controls">
+                    @foreach (var item in timeSheet.Models.Role.FetchRoles())
+                    {
+                        <input type="checkbox" id="@item.RoleID" name="checkbox" value="@item.RoleID" />@item.RoleCode <br />
+                    }
+                    </div>
+
+                </div>
+
+            <div style="margin-bottom:2%;">
+                <div class="controls">
+                    <button type="submit" class="btn btn-large btn-primary">Save</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="module-foot">
+    </div>
+</div>

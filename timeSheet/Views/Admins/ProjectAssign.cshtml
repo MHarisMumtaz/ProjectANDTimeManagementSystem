@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "ProjectAssign";
+    Layout = "~/Views/Shared/_user.cshtml";
+}
+<div class="module message">
+    <div class="module-head">
+        <h3>Project Assignment</h3>
+    </div>
+    <div class="module-body" style="padding-left: 7%; padding-top: 6%;">
+
+        @if (timeSheet.Sessions.IsProjectAssigned=="true")
+        {
+            <script>alert("Project Assigned");</script>
+        }
+        else if (timeSheet.Sessions.IsProjectAssigned == "false")
+        {
+            <script>alert("The Project is already Assigned.");</script>
+        }
+
+        @using (Html.BeginForm("ProjectAsign", "Admins", FormMethod.Post, new { @class = "form-horizontal row-fluid" }))
+        {
+            <input type="hidden" id="userID" name="userID" />
+            <div style="margin-bottom: 2%;">
+                <label class="control-label" for="basicinput">Users</label>
+                <div class="controls">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle btn use" data-toggle="dropdown" href="#" id="-1">Select User<i class="icon-caret-down"></i></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            
+                            @foreach (var item in timeSheet.Models.Users.GetUsers())
+                            {
+                                <li><a id="@item.UserID" onclick="selected(this)">@item.UserID</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <input type="hidden" id="projectID" name="projectID" />
+            <div style="margin-bottom: 2%;">
+                <label class="control-label" for="basicinput">Project</label>
+                <div class="controls">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle btn cont" data-toggle="dropdown" href="#" id="-1">Select Project<i class="icon-caret-down"></i></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            @foreach (var item in timeSheet.Models.Project.GetProjects())
+                            {
+                                <li><a id="@item.ProjectID" onclick="getinfo(this)">@item.ProjectName</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom:2%;" id="P_info">
+
+                <label class="control-label" style="color:white;">StartDate</label>
+                <label class="control-label" id="startdate"></label>
+                <input type="hidden" id="startdat" name="startdate" />
+                <label class="control-label" style="color:white;">EndDate</label>
+                
+                <label class="control-label" id="enddate" name="enddate"></label>
+
+                <input type="hidden" class="control-label" id="statuscode" name="statuscode" />
+                <input type="hidden" id="enddat" name="enddate" />
+            </div>
+
+
+            <br />
+
+            <div style="margin-bottom:2%; margin-right:20%; float:right;">
+                <div class="controls">
+                    <button type="submit" class="btn btn-large btn-primary">Save</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="module-foot">
+    </div>
+</div>
+@section footer{
+    <script type="text/javascript">
+
+        $('#P_info').hide();
+
+        function getinfo(data) {
+            $(".cont").text($(data).text());
+            $id = $(data).attr("id");
+            $('#projectID').val($id);
+            info($id);
+        }
+
+        function selected(data) {
+            $(".use").text($(data).text());
+            $id = $(data).attr("id");
+            $('#userID').val($id);
+
+        }
+       
+        //ajax directly
+        function info(ID) {
+
+            $.getJSON('/api/FetchInfo/ProjectInfo/' + ID, function (Data) {
+
+                $(Data).each(function (i, item) {
+                    $('#P_info').show();
+                    $("#startdate").empty();
+                    $("#enddate").empty();
+                    $("#statuscode").empty();
+                    $("#startdate").append(item.startdate);
+                    $("#enddate").append(item.enddate);
+                    $("#startdat").val(item.startdate);
+                    $("#enddat").val(item.enddate);
+                    $("#statuscode").val(item.StatusCode);
+                });
+            });
+
+        }
+    </script>
+}

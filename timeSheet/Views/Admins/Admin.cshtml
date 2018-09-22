@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_user.cshtml";
+}
+
+<div class="module message">
+    <div class="module-head">
+        <h3>DashBoard</h3>
+    </div>
+    <br />
+
+
+
+    <br />
+    <div class="module-body" style="overflow-y: scroll; height:500px;">
+        <table class=" table table-message">
+            <tbody>
+                <tr class="heading">
+                    <td class="cell-check"></td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        Project Name
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        StartDate
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        EndDate
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        Status
+                    </td>
+                </tr>
+
+
+                @foreach (var item in timeSheet.Models.Project.GetAllProjectsInfo())
+                {
+
+                    <tr class="unread">
+                        <td class="cell-check"><i class="icon-flag"></i></td>
+                        <td class="cell-author hidden-phone hidden-tablet">
+                           
+                            <a id="@item.ProjectID" href="#res" onclick="getresourse(this)">@item.ProjectName</a>
+                        </td>
+                        <td class="cell-author hidden-phone hidden-tablet">
+                            @item.startdate
+                        </td>
+                        <td class="cell-author hidden-phone hidden-tablet">
+                            @item.enddate
+                        </td>
+                        <td class="cell-author hidden-phone hidden-tablet">
+                            @if (item.StatusCode == 1)
+                            {
+                                <p>ON</p>
+                            }
+                            else
+                            {
+                                <p>Closed</p>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module-foot">
+    </div>
+
+</div>
+
+
+
+
+<div class="module message">
+    <div class="module-head">
+        <h3>Resources</h3>
+    </div>
+    <br />
+
+
+
+    <br />
+    <div class="module-body" style="overflow-y: scroll;">
+        <table class=" table table-message">
+            <tbody id="res">
+                <tr class="heading">
+                    <td class="cell-check"></td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        Resource Name
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                        Days
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                       Hours
+                    </td>
+                    <td class="cell-author hidden-phone hidden-tablet">
+                       Task Description
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module-foot">
+    </div>
+
+</div>
+@section footer{
+<script type="text/javascript">
+
+    function getresourse(tage)
+    {
+        var $valu = $(tage).attr('id');
+
+        $.getJSON('/api/FetchInfo/GetResources/' + $valu, function (Data) {
+            $('#res').empty();
+            $('#res').append('<tr class="heading"> <td class="cell-check"></td><td class="cell-author hidden-phone hidden-tablet"> Resource Name</td><td class="cell-author hidden-phone hidden-tablet">Days</td><td class="cell-author hidden-phone hidden-tablet">Hours</td><td class="cell-author hidden-phone hidden-tablet">Task Description</td></tr>');
+            $(Data).each(function (i, item) {
+                $('#res').append('<tr class="unread"><td class="cell-check"><i class="icon-flag"></i></td><td class="cell-author hidden-phone hidden-tablet">' + item.UserID + ' </td><td class="cell-author hidden-phone hidden-tablet">' + item.days + '</td><td class="cell-author hidden-phone hidden-tablet">' + item.Hours + '</td><td class="cell-author hidden-phone hidden-tablet">'+item.TaskDescription+'</td></tr>');
+            });
+        });
+
+
+
+
+    }
+    </script>
+}
